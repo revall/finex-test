@@ -14,13 +14,6 @@ import EditableTableCell from './DataTable/EditableTableCell';
 import TotalCounter from './DataTable/TotalCounter';
 import EnhancedTableFilter from './DataTable/EnhancedTableFilter';
 
-let counter = 0;
-
-function createData(name, quantity, price) {
-  counter += 1;
-  return {id: counter, name, quantity, price};
-}
-
 function getSorting(order, orderBy) {
   return order === 'desc' ? (a, b) => b[orderBy] - a[orderBy] : (a, b) => a[orderBy] - b[orderBy];
 }
@@ -35,22 +28,7 @@ const rows = [
   {name: 'quantity', numeric: true, label: 'Кол-во'},
   {name: 'price', numeric: true, label: 'Цена'},
 ];
-// TODO use minimongo or localStorage here
-const data = [
-  createData('Cupcake', 305, 3.7),
-  createData('Donut', 452, 25.0),
-  createData('Eclair', 262, 16.0),
-  createData('Frozen yoghurt', 159, 6.0),
-  createData('Gingerbread', 356, 16.0),
-  createData('Honeycomb', 408, 3.2),
-  createData('Ice cream sandwich', 237, 9.0),
-  createData('Jelly Bean', 375, 0.0),
-  createData('KitKat', 518, 26.0),
-  createData('Lollipop', 392, 0.2),
-  createData('Marshmallow', 318, 0),
-  createData('Nougat', 360, 19.0),
-  createData('Oreo', 437, 18.0)
-];
+
 
 const styles = theme => ({
   root: {
@@ -70,13 +48,12 @@ class EnhancedTable extends React.Component {
   state = {
     order: 'asc',
     orderBy: 'name',
-    data: data,
     page: 0,
     rowsPerPage: 10,
     showFilter: true,
     dataFilter: {},
-    currency: 'RUB'
-
+    currency: 'RUB',
+    data: []
   };
 
   handleRequestSort = (event, property) => {
@@ -99,10 +76,8 @@ class EnhancedTable extends React.Component {
   };
 
   createOnCellUpdateHandler = (id, property) => value => {
-    const data = [...this.state.data];
-    const updatedData = data.find(row => row.id === id);
-    updatedData[property] = value;
-    this.setState({data});
+    this.props.updateData(id, property, value, this.state.currency);
+    this.setData();
   };
 
   toggleFilter = event => {
@@ -134,16 +109,31 @@ class EnhancedTable extends React.Component {
   };
 
   setCurrency = (currency) => {
-    this.setState({currency})
-  }
+    this.setState({currency});
+  };
 
   setDataFilter = (filter) => {
     this.setState(prevState => ({dataFilter: {...prevState.dataFilter, ...filter}}));
   };
 
+  setData = () => {
+    const data = this.props.getData(this.state.currency);
+    this.setState({data});
+  };
+
+  componentDidMount() {
+    this.setData();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.currency !== prevState.currency) {
+      this.setData();
+    }
+  }
+
   render() {
     const {classes} = this.props;
-    const {data, order, orderBy, rowsPerPage, page, showFilter, currency} = this.state;
+    const {order, orderBy, rowsPerPage, page, showFilter, currency, data} = this.state;
 
     return (
       <Paper className={classes.root}>
@@ -207,6 +197,8 @@ class EnhancedTable extends React.Component {
 
 EnhancedTable.propTypes = {
   classes: PropTypes.object.isRequired,
+  updateData: PropTypes.func.isRequired,
+  getData: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(EnhancedTable);

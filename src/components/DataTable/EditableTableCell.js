@@ -50,6 +50,11 @@ class EditableTableCell extends React.Component {
     this.setState({updated: false});
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.value !== this.state.value) {
+      this.setState({value: nextProps.value});
+    }
+  }
 
   render() {
     const {value} = this.state;
