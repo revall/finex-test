@@ -1,67 +1,55 @@
 import ReactHighcharts from 'react-highcharts';
 import React from "react";
-const highchartsConfig = {
 
-  chart: {
-    plotBackgroundColor: null,
-    plotBorderWidth: null,
-    plotShadow: false,
-    type: 'pie'
-  },
-  title: {
-    text: 'Browser market shares in January, 2018'
-  },
-  tooltip: {
-    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-  },
-  plotOptions: {
-    pie: {
-      allowPointSelect: true,
-      cursor: 'pointer',
-      dataLabels: {
-        enabled: true,
-        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-        style: {
-          color: 'black'
+const PieChart = (props) => {
+  const {chartData} = props;
+  const chartConfig = {
+
+    chart: {
+      plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false,
+      type: 'pie'
+    },
+    title: {
+      text: 'Процентное распределение стоимости'
+    },
+    tooltip: {
+      pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    plotOptions: {
+      pie: {
+        allowPointSelect: true,
+        cursor: 'pointer',
+        dataLabels: {
+          enabled: true,
+          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+          style: {
+            color: 'black'
+          }
         }
       }
-    }
-  },
-  series: [{
-    name: 'Brands',
-    colorByPoint: true,
-    data: [{
-      name: 'Chrome',
-      y: 61.41,
-      sliced: true,
-      selected: true
-    }, {
-      name: 'Internet Explorer',
-      y: 11.84
-    }, {
-      name: 'Firefox',
-      y: 10.85
-    }, {
-      name: 'Edge',
-      y: 4.67
-    }, {
-      name: 'Safari',
-      y: 4.18
-    }, {
-      name: 'Sogou Explorer',
-      y: 1.64
-    }, {
-      name: 'Opera',
-      y: 1.6
-    }, {
-      name: 'QQ',
-      y: 1.2
-    }, {
-      name: 'Other',
-      y: 2.61
+    },
+    series: [{
+      name: 'Доля в стоимости',
+      colorByPoint: true,
+      data: chartData
     }]
-  }]
+  };
+  return <ReactHighcharts config={chartConfig} domProps={{id: 'chartId'}}></ReactHighcharts>;
+};
+
+const dataWraper = (Component) => (props) => {
+  const {data} = props;
+  const sum = data.reduce((total, row) => {
+    return total + row.quantity * row.basePrice;
+  }, 0);
+
+  const chartData = data.map(row => ({name: row.name, y: ((row.basePrice * row.quantity) / sum) * 100}));
+
+
+  return (<PieChart chartData={chartData}/>);
 };
 
 
-<ReactHighcharts config={highchartsConfig} domProps={{id: 'chartId'}}></ReactHighcharts>
+export default dataWraper(PieChart);

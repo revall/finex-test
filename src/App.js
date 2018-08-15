@@ -1,10 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import {simpleAction} from './actions/simpleAction';
 import withRoot from './withRoot';
 import {withStyles} from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import DataTable from './components/DataTable';
 
@@ -17,7 +14,7 @@ function createData(name, quantity, basePrice) {
   return {
     id: counter, name, quantity, basePrice,
     get USD() {
-      return Math.round(this.basePrice * 100 / EXCHANGE_RATE) / 100;
+      return Math.round(this.basePrice * 10000 / EXCHANGE_RATE) / 10000;
     },
     set USD(value) {
       this.basePrice = value * EXCHANGE_RATE;
@@ -57,21 +54,8 @@ const styles = theme => ({
 });
 
 
-const mapStateToProps = state => ({
-  ...state
-});
-
-const mapDispatchToProps = dispatch => ({
-  simpleAction: () => dispatch(simpleAction())
-});
-
 class App extends React.Component {
-  static propTypes = {classes: PropTypes.object.isRequired,};
-
-  simpleAction = () => {
-    this.props.simpleAction();
-  };
-
+  static propTypes = {classes: PropTypes.object.isRequired};
 
   getData = (currency) => {
     console.log('Set currency:', currency);
@@ -94,10 +78,8 @@ class App extends React.Component {
 
   };
 
-
   render() {
     const {classes} = this.props;
-
 
     return (
       <div className={classes.root}>
@@ -107,14 +89,11 @@ class App extends React.Component {
         <Typography variant="subheading" gutterBottom>
           Тестовое задание
         </Typography>
-        <pre>{JSON.stringify(this.props)}</pre>
-        <Button variant="contained" color="secondary" onClick={this.simpleAction}>Test redux action</Button>
         <DataTable getData={this.getData} updateData={this.updateData}/>
-
       </div>
     );
   }
 }
 
 
-export default withRoot(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(App)));
+export default withRoot(withStyles(styles)(App));

@@ -13,6 +13,7 @@ import EnhancedTableToolbar from './DataTable/EnhancedTableToolbar';
 import EditableTableCell from './DataTable/EditableTableCell';
 import TotalCounter from './DataTable/TotalCounter';
 import EnhancedTableFilter from './DataTable/EnhancedTableFilter';
+import PieChart from './Charts';
 
 function getSorting(order, orderBy) {
   return order === 'desc' ? (a, b) => b[orderBy] - a[orderBy] : (a, b) => a[orderBy] - b[orderBy];
@@ -188,7 +189,7 @@ class EnhancedTable extends React.Component {
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
         <TotalCounter data={data} currency={currency}/>
-
+        <PieChart data={data}/>
 
       </Paper>
     );
