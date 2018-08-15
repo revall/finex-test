@@ -6,19 +6,26 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 class CurrencySelector extends React.Component {
   static propTypes = {
+    setCurrency: PropTypes.func.isRequired,
     currencies: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired
     })).isRequired
   };
-// TODO handle currency change
+
   state = {
-    currency: 'RUR',
+    currency: 'RUB',
   };
 
   handleChange = event => {
     this.setState({[event.target.name]: event.target.value});
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.currency !== prevState.currency) {
+      this.props.setCurrency(this.state.currency);
+    }
+  }
 
   render() {
     const {currencies} = this.props;

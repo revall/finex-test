@@ -25,12 +25,17 @@ function getSorting(order, orderBy) {
   return order === 'desc' ? (a, b) => b[orderBy] - a[orderBy] : (a, b) => a[orderBy] - b[orderBy];
 }
 
+const currencies = [
+  {value: 'USD', label: '$'},
+  {value: 'RUB', label: '₽'},
+];
+
 const rows = [
   {name: 'name', numeric: false, label: 'Название продукта'},
   {name: 'quantity', numeric: true, label: 'Кол-во'},
   {name: 'price', numeric: true, label: 'Цена'},
 ];
-// TODO use minimongo or localstorage here
+// TODO use minimongo or localStorage here
 const data = [
   createData('Cupcake', 305, 3.7),
   createData('Donut', 452, 25.0),
@@ -45,11 +50,6 @@ const data = [
   createData('Marshmallow', 318, 0),
   createData('Nougat', 360, 19.0),
   createData('Oreo', 437, 18.0)
-];
-
-const currencies = [
-  {value: 'USD', label: '$'},
-  {value: 'RUR', label: '₽'},
 ];
 
 const styles = theme => ({
@@ -74,7 +74,8 @@ class EnhancedTable extends React.Component {
     page: 0,
     rowsPerPage: 10,
     showFilter: true,
-    dataFilter: {}
+    dataFilter: {},
+    currency: 'RUB'
 
   };
 
@@ -88,7 +89,6 @@ class EnhancedTable extends React.Component {
 
     this.setState({order, orderBy});
   };
-
 
   handleChangePage = (event, page) => {
     this.setState({page});
@@ -133,18 +133,22 @@ class EnhancedTable extends React.Component {
     return true;
   };
 
+  setCurrency = (currency) => {
+    this.setState({currency})
+  }
+
   setDataFilter = (filter) => {
     this.setState(prevState => ({dataFilter: {...prevState.dataFilter, ...filter}}));
   };
 
   render() {
     const {classes} = this.props;
-    const {data, order, orderBy, rowsPerPage, page, showFilter} = this.state;
+    const {data, order, orderBy, rowsPerPage, page, showFilter, currency} = this.state;
 
     return (
       <Paper className={classes.root}>
         <EnhancedTableToolbar tableTitle={'Каталог продукции'} currencies={currencies}
-                              toggleFilter={this.toggleFilter}/>
+                              toggleFilter={this.toggleFilter} setCurrency={this.setCurrency}/>
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -193,7 +197,7 @@ class EnhancedTable extends React.Component {
           onChangePage={this.handleChangePage}
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
-        <TotalCounter data={data} currency={'USD'}/>
+        <TotalCounter data={data} currency={currency}/>
 
 
       </Paper>

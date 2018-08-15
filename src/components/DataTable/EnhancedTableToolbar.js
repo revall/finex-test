@@ -1,7 +1,6 @@
 import {lighten} from "@material-ui/core/styles/colorManipulator";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import React from "react";
@@ -35,7 +34,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-  const {classes, tableTitle, currencies, toggleFilter} = props;
+  const {classes, tableTitle, currencies, toggleFilter, setCurrency} = props;
 
   return (
     <Toolbar className={classes.root}>
@@ -46,18 +45,14 @@ let EnhancedTableToolbar = props => {
       </div>
       <div className={classes.spacer}/>
       <div className={classes.actions}>
-        <Tooltip title="Выбор валюты">
           <IconButton aria-label="Currency selector">
-            <CurrencySelector currencies={currencies}/>
+            <CurrencySelector currencies={currencies} setCurrency={setCurrency}/>
           </IconButton>
-        </Tooltip>
       </div>
       <div className={classes.actions}>
-        <Tooltip title="Фильтр">
           <IconButton aria-label="Filter list">
             <FilterListIcon onClick={toggleFilter}/>
           </IconButton>
-        </Tooltip>
       </div>
     </Toolbar>
   );
@@ -67,6 +62,7 @@ EnhancedTableToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
   tableTitle: PropTypes.string.isRequired,
   toggleFilter: PropTypes.func.isRequired,
+  setCurrency: PropTypes.func.isRequired,
   currencies: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired
